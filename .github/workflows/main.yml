@@ -1,0 +1,36 @@
+name: Package
+
+on:
+  push:
+    tags:
+      - '*-v*'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+
+      - name: Package All
+        run: |
+          sudo apt-get install p7zip
+          for dir in */
+          do
+            dir=${dir%*/}
+            echo "Packaging $dir"
+            7z a "${dir// /}.7z" "./$dir/*"
+          done
+
+      - name: Create Changelog
+        id: create_changelog
+        uses: metcalfc/changelog-generator@v3.0.0
+        with:
+          myToken: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create Release
+        uses: ncipollo/release-action@v1.10.0
+        with:
+          allowUpdates: true
+          artifacts: "*.7z"
+          body: ${{ steps.create_changelog.outputs.changelog }}
+          token: ${{ secrets.GITHUB_TOKEN }}
