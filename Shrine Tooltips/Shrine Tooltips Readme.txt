@@ -1,7 +1,7 @@
 				Shrine Tooltips
 				By Virnetch
 
-Version: 1.2.3
+Version: 2.0.0
 
 =========
 Contents
@@ -26,11 +26,18 @@ MWSE 2.1: https://nullcascade.com/mwse/mwse-dev.zip
 Description
 ============
 Adds tooltips to shrines on hovering over the different options, describing the effects a blessing has.
-Includes descriptions for shrines from Tamriel_Data. 
+Includes compatibility for shrines from Tamriel_Data, OAAB_Data, mtrDaedricOfferings and Solstheim - AllMaker's Blessings
 
 ============
 Changelog
 ============
+2.0.0
+ - Added MCM option to show more details about the effects of blessings.
+ - Added compatibility for shrines from OAAB_Data.
+ - Added MCM option to disable the mod.
+ - Changed the way shrines are detected to improve stability.
+ - Moved some functions to `common.lua` to add the possibility for other mods to use them.
+ - Other minor changes and improvements
 1.2.3
  - Added compatibility with Solstheim - AllMaker's Blessings
  - Fixed double-capitalized letters again... this time for good.
