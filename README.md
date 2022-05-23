@@ -1,5 +1,5 @@
 # tes3-mods
-The latest versions of my [MWSE-Lua](https://github.com/MWSE/MWSE) mods for The Elder Scrolls III: Morrowind. Available on [Nexus Mods](https://www.nexusmods.com/morrowind/users/68510382?tab=user+files).
+The latest versions of my [MWSE-Lua](https://github.com/MWSE/MWSE) mods for The Elder Scrolls III: Morrowind. Available on [Nexus Mods](https://www.nexusmods.com/morrowind/users/68510382?tab=user+files) (preferred) or from the [GitHub Releases](https://github.com/Virnetch/tes3-mods/releases).
 
 --------------------------------------------------------------------
 
