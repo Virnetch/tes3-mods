@@ -9,4 +9,4 @@ Adds NPC services for recharging enchanted items, deciphering magic scrolls and 
 ## Shrine Tooltips - [<img alt="Nexus" src="https://images.nexusmods.com/favicons/PaleBrown/favicon.ico" width="20" height="20" /> Download](https://www.nexusmods.com/morrowind/mods/48275)
 Adds tooltips to shrines on hovering over the different options, describing the effects a blessing has.
 
-Includes compatibility for shrines from [Tamriel_Data](https://www.nexusmods.com/morrowind/mods/44537), [mtrDaedricOfferings](https://www.nexusmods.com/morrowind/mods/49697) and [Solstheim - AllMaker's Blessings](https://www.nexusmods.com/morrowind/mods/50416)
+Includes compatibility for shrines from [Tamriel_Data](https://www.nexusmods.com/morrowind/mods/44537), [OAAB_Data](https://www.nexusmods.com/morrowind/mods/49042), [mtrDaedricOfferings](https://www.nexusmods.com/morrowind/mods/49697) and [Solstheim - AllMaker's Blessings](https://www.nexusmods.com/morrowind/mods/50416)
