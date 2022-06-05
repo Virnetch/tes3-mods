@@ -1,4 +1,4 @@
-		Enchantment Services Redone v0.9.1
+		Enchantment Services Redone v0.9.2
 			By Virnetch
 
 
@@ -83,6 +83,10 @@ The Mod Config Menu includes options to tweak the  cost and skill requirements o
 - [Buying Game](https://www.nexusmods.com/morrowind/mods/50574) \- Improves the restocking of the scrolls added by the `Blank Scrolls` setting by adding a delay between restocks, and increasing variety between the items added on each restock.
 
 ### Changelog
+
+#### 0.9.2
+
+* Fixed an issue where using Wrye Mash's Repair all function would delete some created transcriptions from a save file. Note that transcriptions created with earlier versions of the mod might still be deleted by it.
 
 #### 0.9.1
 
