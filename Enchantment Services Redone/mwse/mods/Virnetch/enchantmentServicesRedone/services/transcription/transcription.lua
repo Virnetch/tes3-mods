@@ -193,7 +193,7 @@ function transcription.createTranscription(sourceScroll, targetScroll, name, pow
 	local newScroll = objectCreator.createTemporaryObject({
 		objectType = tes3.objectType.book,
 		type = tes3.bookType.scroll,
-		id = common.getRandomId("vir_esr_sc"),
+		-- id = common.getRandomId("vir_esr_sc"), -- Wrye Mash Repair All will delete books not found in master plugins if id doesn't match the one created randomly when enchanting
 		name = name,
 		mesh = targetScroll.mesh,
 		icon = targetScroll.icon,

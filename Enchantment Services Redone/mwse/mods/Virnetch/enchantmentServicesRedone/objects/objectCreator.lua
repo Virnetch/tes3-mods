@@ -8,12 +8,23 @@ local common = require("Virnetch.enchantmentServicesRedone.common")
 	Notes:
 	 - Temporary enchantments can only be added to books that are also temporary.
 ]]
---- @param params tes3.createObject.params
 function objectCreator.createTemporaryObject(params)
+	if not common.savedData or params.sourceless then
+		common.log:error("Game not loaded yet or attemted to create a sourceless temporaryObject: %s", params.id)
+		return
+	end
+
 	if not common.savedData.temporaryObjects[tostring(params.objectType)] then
 		common.log:error("Attempted to createTemporaryObject with unmanaged objectType: %s",
 			( table.find(tes3.objectType, params.objectType) or tostring(params.objectType) )
 		)
+		return
+	end
+
+	-- Wrye Mash Repair All will delete books not found in master plugins if id doesn't match the one created randomly when enchanting
+	-- https://github.com/polemion/Wrye-Mash-Polemos/blob/master/Mopy/mash/mosh.py#L6624
+	if params.objectType == tes3.objectType.book and params.id and not string.find(params.id, "^%d%d%d%d%d%d%d%d%d%d+$") then
+		common.log:error("Attempted to createTemporaryObject book with unique id %s. Wrye Mash Repair All would delete this from the save file!", params.id)
 		return
 	end
 
