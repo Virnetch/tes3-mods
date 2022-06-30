@@ -311,6 +311,33 @@ do
 	}
 
 	local miscCategory = pageDeciphering:createCategory(common.i18n("mcm.category.misc"))
+	miscCategory:createDropdown{		-- customName
+		label = common.i18n("mcm.service.deciphering.customName.label"),
+		description = common.i18n("mcm.service.deciphering.customName.description"),
+		options = {
+			{
+				label = common.i18n("mcm.service.deciphering.customName.options.always"),
+				value = "always"
+			},
+			{
+				label = common.i18n("mcm.service.deciphering.customName.options.onlyIfBad"),
+				value = "onlyIfBad"
+			},
+			{
+				label = common.i18n("mcm.service.deciphering.customName.options.onlyIfBadAndCustom"),
+				value = "onlyIfBadAndCustom"
+			},
+			{
+				label = common.i18n("mcm.service.deciphering.customName.options.never"),
+				value = "never"
+			}
+		},
+		variable = mwse.mcm.createTableVariable{
+			id = "customName",
+			table = common.config.deciphering
+		}
+	}
+
 	miscCategory:createOnOffButton{		-- showSourceInTooltip
 		label = common.i18n("mcm.service.deciphering.showSourceInTooltip.label"),
 		description = common.i18n("mcm.service.deciphering.showSourceInTooltip.description")

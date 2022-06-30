@@ -27,6 +27,7 @@ return {
 		npcLearns = false,
 		showSourceInTooltip = true,
 		sourceTextToShowInTooltip = "oneLine",
+		customName = "onlyIfBadAndCustom",
 		offerers = {}
 	},
 	transcription = {

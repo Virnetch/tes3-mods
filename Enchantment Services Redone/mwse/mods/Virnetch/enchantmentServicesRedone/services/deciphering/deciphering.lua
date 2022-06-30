@@ -4,7 +4,6 @@ local common = require("Virnetch.enchantmentServicesRedone.common")
 
 local InventorySelectMenu = require("Virnetch.enchantmentServicesRedone.ui.InventorySelectMenu")
 
--- TODO Option to change spell name, could disable in mcm?
 
 --- Returns the scroll object that this spell was deciphered from
 --- @param spell tes3spell
@@ -48,17 +47,26 @@ function deciphering.scrollNameToSpellName(scrollName)
 
 		if spellName ~= scrollName then
 			common.log:trace("Converted scroll name to spell name: %s -> %s", scrollName, spellName)
+
+			-- If the name is whitespace only, change it to nil
+			spellName = spellName:gsub("^%s*$", "")
+			if spellName == "" then
+				spellName = nil
+			end
+
 			return spellName
 		end
 	end
 end
 
 --- @param scroll tes3book
+--- @param spellName string Name of the spell
 --- @return tes3spell
-function deciphering.createDecipheredSpell(scroll)
+function deciphering.createDecipheredSpell(scroll, spellName)
 	local spell = deciphering.getDecipheredSpell(scroll)
 	if spell then
 		common.log:debug("Spell already deciphered, returning %s", spell.id)
+		spell.name = spellName
 		return spell
 	end
 
@@ -68,7 +76,7 @@ function deciphering.createDecipheredSpell(scroll)
 	spell = tes3.createObject({
 		objectType = tes3.objectType.spell,
 		id = spellId,
-		name = deciphering.scrollNameToSpellName(scroll.name),
+		name = spellName,
 		effects = scroll.enchantment.effects
 	})
 	spell.magickaCost = common.calculateMagickaCost(scroll.enchantment)
@@ -88,7 +96,13 @@ function deciphering.isScrollDecipherable(scroll)
 		or not common.canUseSpellmaking(scroll.enchantment)
 		-- By default ignore scrolls that don't include "scroll" in their name
 		-- This is to prevent items that probably shouldn't be deciphered (ie. quest related special items)
-		or not deciphering.scrollNameToSpellName(scroll.name)
+		or (
+			not deciphering.scrollNameToSpellName(scroll.name)
+			and (
+				common.config.deciphering.customName == "never"
+				or ( common.config.deciphering.customName == "onlyIfBadAndCustom" and scroll.sourceMod )
+			)
+		)
 	) then
 		return false
 	end
@@ -144,6 +158,98 @@ function deciphering.canDecipherItem(merchant, item)
 	return ( math.max(0, chance) >= chanceRequired )
 end
 
+--- @param scroll tes3book
+--- @param spellName string? Optional, if `nil`, a name will either be generated from the scroll name or an input menu will be shown according to the `deciphering.customName` config option.
+local function decipherScroll(scroll, spellName)
+
+	if not spellName then
+		spellName = deciphering.scrollNameToSpellName(scroll.name)
+		if not spellName or common.config.deciphering.customName == "always" then
+			local nameMenu = tes3ui.createMenu({ id = common.GUI_ID.Deciphering_nameMenu, fixedFrame = true })
+			nameMenu.flowDirection = tes3.flowDirection.topToBottom
+			nameMenu.minWidth = 390
+
+			local nameHeader = nameMenu:createLabel({ text = common.i18n("service.deciphering.customNameHeader", { scrollName = scroll.name }) })
+			nameHeader.borderAllSides = 6
+			nameHeader.absolutePosAlignX = 0.5
+
+			local nameBlock = nameMenu:createBlock({ id = common.GUI_ID.Deciphering_nameBlock })
+			nameBlock.autoHeight = true
+			nameBlock.widthProportional = 1.0
+			nameBlock.childAlignY = 0.5
+			nameBlock.borderAllSides = 6
+			nameBlock.borderLeft = 5
+
+			local nameLabel = nameBlock:createLabel({ text = common.i18n("service.deciphering.customNameLabel") })
+			nameLabel.borderAllSides = 6
+			nameLabel.color = common.palette.headerColor
+			nameLabel:register(tes3.uiEvent.help, function()
+				common.tooltip(common.i18n("service.deciphering.customNameTooltip"), true)
+			end)
+
+			local nameInputBorder = nameBlock:createThinBorder()
+			nameInputBorder.widthProportional = 1.0
+			nameInputBorder.height = 30
+			nameInputBorder.childAlignY = 0.5
+			nameInputBorder.paddingAllSides = 4
+
+			local nameInput = nameInputBorder:createTextInput({ id = common.GUI_ID.Deciphering_nameInput, text = (spellName or scroll.name) })
+			nameInput.widget.lengthLimit = 31
+			nameInput.widget.eraseOnFirstKey = false
+			nameInput.borderLeft = 5
+			nameInput.borderRight = 5
+			nameInputBorder:register(tes3.uiEvent.mouseClick, function()
+				tes3ui.acquireTextInput(nameInput)
+			end)
+
+			local bottomBlock = nameMenu:createBlock({ id = common.GUI_ID.Deciphering_nameBottomBlock })
+			bottomBlock.autoHeight = true
+			bottomBlock.widthProportional = 1.0
+			bottomBlock.childAlignX = 1.0
+
+			local nameOkButton = bottomBlock:createButton({ text = tes3.findGMST(tes3.gmst.sOK).value })
+			nameOkButton:register(tes3.uiEvent.mouseClick, function()
+				if not (nameInput and nameInput.text and string.len(nameInput.text) > 0) then
+					tes3.messageBox(common.i18n("service.deciphering.customNameNeeded"))
+				else
+					decipherScroll(scroll, nameInput.text)
+					nameMenu:destroy()
+				end
+			end)
+
+			tes3ui.acquireTextInput(nameInput)
+			nameMenu:updateLayout()
+
+			return
+		end
+	end
+
+	local spell = deciphering.createDecipheredSpell(scroll, spellName)
+	tes3.addSpell({
+		reference = tes3.player,
+		spell = spell
+	})
+	if common.config.deciphering.npcLearns then
+		tes3.addSpell({
+			reference = tes3ui.getServiceActor(),
+			spell = spell
+		})
+	end
+	tes3.messageBox(common.i18n("service.deciphering.spellLearned", { spellName = spell.name }))
+	tes3.playSound({ sound = "enchant success" })
+--	local firstMagicEffect = common.getFirstMagicEffectOnEnchantment(item.enchantment)
+--	tes3.playSound({ sound = firstMagicEffect.castSoundEffect })
+--	timer.start({
+--		type = timer.real,
+--		duration = 1,
+--		callback = function()
+--			tes3.playSound({ sound = firstMagicEffect.hitSoundEffect })
+--		end
+--	})
+
+	tes3ui.updateInventorySelectTiles()
+end
+
 local function decipheringItemSelected(e)
 	if not e.source then return end
 	local item = e.source:getPropertyObject("MenuInventorySelect_object")
@@ -172,30 +278,7 @@ local function decipheringItemSelected(e)
 		})
 
 		-- Create the actual spell and add it
-		local spell = deciphering.createDecipheredSpell(item)
-		tes3.addSpell({
-			reference = tes3.player,
-			spell = spell
-		})
-		if common.config.deciphering.npcLearns then
-			tes3.addSpell({
-				reference = merchant,
-				spell = spell
-			})
-		end
-		tes3.messageBox(common.i18n("service.deciphering.spellLearned", { spellName = spell.name }))
-		tes3.playSound({ sound = "enchant success" })
-	--	local firstMagicEffect = common.getFirstMagicEffectOnEnchantment(item.enchantment)
-	--	tes3.playSound({ sound = firstMagicEffect.castSoundEffect })
-	--	timer.start({
-	--		type = timer.real,
-	--		duration = 1,
-	--		callback = function()
-	--			tes3.playSound({ sound = firstMagicEffect.hitSoundEffect })
-	--		end
-	--	})
-
-		tes3ui.updateInventorySelectTiles()
+		decipherScroll(item)
 	end
 end
 
