@@ -99,8 +99,8 @@ function deciphering.isScrollDecipherable(scroll)
 		or (
 			not deciphering.scrollNameToSpellName(scroll.name)
 			and (
-				common.config.deciphering.customName == "never"
-				or ( common.config.deciphering.customName == "onlyIfBadAndCustom" and scroll.sourceMod )
+				common.config.deciphering.allowNonStandardNames == "never"
+				or ( common.config.deciphering.allowNonStandardNames == "onlyCustom" and scroll.sourceMod )
 			)
 		)
 	) then
@@ -164,30 +164,64 @@ local function decipherScroll(scroll, spellName)
 
 	if not spellName then
 		spellName = deciphering.scrollNameToSpellName(scroll.name)
-		if not spellName or common.config.deciphering.customName == "always" then
+		if (
+			not spellName
+			or common.config.deciphering.customName == "always"
+			or common.config.deciphering.customName == "alwaysForCustom" and not scroll.sourceMod
+		) then
 			local nameMenu = tes3ui.createMenu({ id = common.GUI_ID.Deciphering_nameMenu, fixedFrame = true })
 			nameMenu.flowDirection = tes3.flowDirection.topToBottom
+			nameMenu.autoWidth = true
 			nameMenu.minWidth = 390
 
-			local nameHeader = nameMenu:createLabel({ text = common.i18n("service.deciphering.customNameHeader", { scrollName = scroll.name }) })
-			nameHeader.borderAllSides = 6
-			nameHeader.absolutePosAlignX = 0.5
+			local nameHeaderBlock = nameMenu:createBlock({ id = common.GUI_ID.Deciphering_nameHeaderBlock })
+			nameHeaderBlock.autoHeight = true
+			nameHeaderBlock.autoWidth = true
+			nameHeaderBlock.parent.childAlignX = 0.5
+			nameHeaderBlock.childAlignY = 0.5
 
-			local nameBlock = nameMenu:createBlock({ id = common.GUI_ID.Deciphering_nameBlock })
-			nameBlock.autoHeight = true
-			nameBlock.widthProportional = 1.0
-			nameBlock.childAlignY = 0.5
-			nameBlock.borderAllSides = 6
-			nameBlock.borderLeft = 5
+			local itemHolderBlock = nameHeaderBlock:createBlock()
+			itemHolderBlock.width = 44
+			itemHolderBlock.height = 44
+			itemHolderBlock.borderAllSides = 8
+			itemHolderBlock.childAlignY = 0.5
+			itemHolderBlock:register(tes3.uiEvent.help, function()
+				tes3ui.createTooltipMenu({ item = scroll })
+			end)
 
-			local nameLabel = nameBlock:createLabel({ text = common.i18n("service.deciphering.customNameLabel") })
+			-- Add enchantment icon
+			local magicIcon = itemHolderBlock:createImage({ path = "Textures\\menu_icon_magic.tga" })
+			magicIcon.widthProportional = 1
+			magicIcon.heightProportional = 1
+
+			-- Add shadow icon
+			local shadowIcon = itemHolderBlock:createImage({ path = "icons\\" .. scroll.icon })
+			shadowIcon.color = {0.0, 0.0, 0.0}
+			shadowIcon.absolutePosAlignX = 0.6
+			shadowIcon.absolutePosAlignY = 0.55
+
+			-- Add item icon
+			local icon = itemHolderBlock:createImage({ path = "icons\\" .. scroll.icon })
+			icon.absolutePosAlignX = 0.5
+			icon.absolutePosAlignY = 0.5
+
+			local nameHeaderLabel = nameHeaderBlock:createLabel({ text = common.i18n("service.deciphering.customNameHeader", { scrollName = scroll.name }) })
+
+			local nameInputBlock = nameMenu:createBlock({ id = common.GUI_ID.Deciphering_nameInputBlock })
+			nameInputBlock.autoHeight = true
+			nameInputBlock.widthProportional = 1.0
+			nameInputBlock.childAlignY = 0.5
+			nameInputBlock.borderAllSides = 6
+			nameInputBlock.borderLeft = 5
+
+			local nameLabel = nameInputBlock:createLabel({ text = common.i18n("service.deciphering.customNameLabel") })
 			nameLabel.borderAllSides = 6
 			nameLabel.color = common.palette.headerColor
 			nameLabel:register(tes3.uiEvent.help, function()
 				common.tooltip(common.i18n("service.deciphering.customNameTooltip"), true)
 			end)
 
-			local nameInputBorder = nameBlock:createThinBorder()
+			local nameInputBorder = nameInputBlock:createThinBorder()
 			nameInputBorder.widthProportional = 1.0
 			nameInputBorder.height = 30
 			nameInputBorder.childAlignY = 0.5

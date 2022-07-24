@@ -311,6 +311,29 @@ do
 	}
 
 	local miscCategory = pageDeciphering:createCategory(common.i18n("mcm.category.misc"))
+	miscCategory:createDropdown{		-- allowNonStandardNames
+		label = common.i18n("mcm.service.deciphering.allowNonStandardNames.label"),
+		description = common.i18n("mcm.service.deciphering.allowNonStandardNames.description"),
+		options = {
+			{
+				label = common.i18n("mcm.service.deciphering.allowNonStandardNames.options.always"),
+				value = "always"
+			},
+			{
+				label = common.i18n("mcm.service.deciphering.allowNonStandardNames.options.onlyCustom"),
+				value = "onlyCustom"
+			},
+			{
+				label = common.i18n("mcm.service.deciphering.allowNonStandardNames.options.never"),
+				value = "never"
+			}
+		},
+		variable = mwse.mcm.createTableVariable{
+			id = "allowNonStandardNames",
+			table = common.config.deciphering
+		}
+	}
+
 	miscCategory:createDropdown{		-- customName
 		label = common.i18n("mcm.service.deciphering.customName.label"),
 		description = common.i18n("mcm.service.deciphering.customName.description"),
@@ -320,16 +343,12 @@ do
 				value = "always"
 			},
 			{
-				label = common.i18n("mcm.service.deciphering.customName.options.onlyIfBad"),
-				value = "onlyIfBad"
+				label = common.i18n("mcm.service.deciphering.customName.options.alwaysForCustom"),
+				value = "alwaysForCustom"
 			},
 			{
-				label = common.i18n("mcm.service.deciphering.customName.options.onlyIfBadAndCustom"),
-				value = "onlyIfBadAndCustom"
-			},
-			{
-				label = common.i18n("mcm.service.deciphering.customName.options.never"),
-				value = "never"
+				label = common.i18n("mcm.service.deciphering.customName.options.onlyWhenNecessary"),
+				value = "onlyWhenNecessary"
 			}
 		},
 		variable = mwse.mcm.createTableVariable{

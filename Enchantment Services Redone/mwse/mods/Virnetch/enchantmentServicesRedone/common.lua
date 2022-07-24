@@ -55,7 +55,8 @@ common.GUI_ID = {
 	MenuMessage_cancelButton = tes3ui.registerID("vir_esr:MenuMessage_cancelButton"),
 
 	Deciphering_nameMenu = tes3ui.registerID("vir_esr:Deciphering_nameMenu"),
-	Deciphering_nameBlock = tes3ui.registerID("vir_esr:Deciphering_nameBlock"),
+	Deciphering_nameHeaderBlock = tes3ui.registerID("vir_esr:Deciphering_nameHeaderBlock"),
+	Deciphering_nameInputBlock = tes3ui.registerID("vir_esr:Deciphering_nameInputBlock"),
 	Deciphering_nameInput = tes3ui.registerID("vir_esr:Deciphering_nameInput"),
 	Deciphering_nameBottomBlock = tes3ui.registerID("vir_esr:Deciphering_nameBottomBlock"),
 
