@@ -1,4 +1,4 @@
-		Enchantment Services Redone v0.9.2
+		Enchantment Services Redone v0.9.3
 			By Virnetch
 
 
@@ -67,7 +67,9 @@ The Mod Config Menu includes options to tweak the  cost and skill requirements o
 - By default, the service is offered by NPCs and creatures who offer the spellmaking service, but don't offer repairs, transcription, or recharging services.
 - The cost of deciphering a scroll is equal to the cost of the resulting spell, if it were sold by the same NPC.
 - For an NPC to be able to decipher a specific scroll, they must have a high cast chance for the resulting spell. Some scrolls will be refused by every NPC in the game - if the `Require Scroll` feature for Transcription is enabled, it is possible to transcribe these scrolls to a lower enchant capacity scroll to make them easier to decipher, but this will reduce the enchantment's effects.
-- Not all scrolls may be decipherable. The scroll's name must include "scroll", and mustn't have effects that are unavailable for spellmaking.
+- Not all scrolls may be decipherable. The enchantment must not have effects that are unavailable for spellmaking. By default, the scroll must also either have a name that includes "scroll", or be a custom player enchanted scroll.
+  - The MCM includes settings to allow deciphering scrolls with non-standard names. If playing a non-english version of the game, it's recommended to change them.
+
 - Optionally, the spell may also be learned by the NPC/creature offering the service.
 
 #### Item Additions: Blank Scrolls
@@ -83,6 +85,10 @@ The Mod Config Menu includes options to tweak the  cost and skill requirements o
 - [Buying Game](https://www.nexusmods.com/morrowind/mods/50574) \- Improves the restocking of the scrolls added by the `Blank Scrolls` setting by adding a delay between restocks, and increasing variety between the items added on each restock.
 
 ### Changelog
+
+#### 0.9.3
+
+* Added two new MCM settings to allow deciphering scrolls with non-standard names. A new menu will be shown when deciphering these scrolls to manually input a name. The menu will also be shown when deciphering a custom player enchanted scroll.
 
 #### 0.9.2
 
