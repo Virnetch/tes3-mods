@@ -310,6 +310,15 @@ local function onTranscribeClick(isService)
 			itemData = commonTranscription.getStoredPropertyObject("vir_esr_itemData", common.GUI_ID.TranscriptionMenu_soulBlock, "tes3itemData"),
 			playSound = false
 		})
+
+		-- If the used soul gem was Azura's Star, add a new empty copy to the player
+		if common.infiniteSoulGems[soulGem.id:lower()] then
+			tes3.addItem({
+				reference = tes3.player,
+				item = soulGem,
+				playSound = false
+			})
+		end
 	end
 
 	if success then

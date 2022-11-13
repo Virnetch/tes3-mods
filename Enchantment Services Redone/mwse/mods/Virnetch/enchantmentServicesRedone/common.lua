@@ -96,6 +96,12 @@ event.register(tes3.event.initialized, function()
 	}
 end)
 
+-- Soulgems which won't be consumed when using transcription
+common.infiniteSoulGems = {
+	["misc_soulgem_azura"] = true,
+	["nc_soulgem_azurab"] = true	-- Black Azura's Star from Necrocraft
+}
+
 --- @class esrSavedData
 --- @field temporaryObjects table<string, string[]> For each objectType, stores the ids of temporaryObjects that will be deleted when no longer needed. See objects\objectCreator.lua
 --- @field transcriptions table<string, string> For transcriptions, stores the sourceScroll's id under the created scroll's id. Used to access the original scroll's `text` to display it when activating the scroll.
