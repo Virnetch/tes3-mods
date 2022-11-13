@@ -76,7 +76,7 @@ Delete the Data files/mwse/mods/Virnetch/ShrineTooltips folder.
 Incompatibilities
 ==================
 Requires MWSE to work, so it is currently incompatible with OpenMW.
-Should be compatible with all mods.
+Mods that edit blessings should be compatible and show the correct tooltip as long as they only edit the original spells. Mods that add new blessing spells need to be added to this mod's config file to have tooltips. If you find a blessing without a tooltip, let me know the mod that adds it and I can add it to the mod.
 
 ========
 Credits
