@@ -5,7 +5,7 @@ common.defaultConfig = require("Virnetch.enchantmentServicesRedone.defaultConfig
 common.i18n = mwse.loadTranslations("Virnetch.enchantmentServicesRedone")
 
 common.mod = {}
-common.mod.version = "0.9.4"
+common.mod.version = "0.9.5"
 common.mod.name = common.i18n("mod.name")
 
 local logger = require("logging.logger")
