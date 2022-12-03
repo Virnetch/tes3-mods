@@ -282,13 +282,8 @@ local function onTranscribeClick(isService)
 			return
 		end
 
-		-- Move gold
-		tes3.transferItem({
-			from = tes3.player,
-			to = merchant,
-			item = "Gold_001",
-			count = cost
-		})
+		-- Take the money
+		common.payMerchant(merchant, cost)
 	else
 		-- Calculate chance of successfully transcribing
 		local chance = menu:getPropertyInt("vir_esr_chance")

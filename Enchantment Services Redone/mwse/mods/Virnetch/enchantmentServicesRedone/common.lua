@@ -133,6 +133,18 @@ function common.leaveMenuModeIfNotInMenu()
 	end
 end
 
+--- Removes gold from player and adds the same amount to `merchant`'s `barterGold`
+--- @param merchant tes3mobileActor
+--- @param cost number
+function common.payMerchant(merchant, cost)
+	tes3.removeItem({
+		reference = tes3.player,
+		item = "Gold_001",
+		count = cost
+	})
+	merchant.barterGold = merchant.barterGold + cost
+end
+
 --[[
 function common.showScrollMenu(text)
 	tes3ui.showScrollMenu(text)

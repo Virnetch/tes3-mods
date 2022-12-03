@@ -304,12 +304,7 @@ local function decipheringItemSelected(e)
 		end
 
 		-- Take the money
-		tes3.transferItem({
-			from = tes3.player,
-			to = merchant,
-			item = "Gold_001",
-			count = decipheringCost
-		})
+		common.payMerchant(merchant, decipheringCost)
 
 		-- Create the actual spell and add it
 		decipherScroll(item)

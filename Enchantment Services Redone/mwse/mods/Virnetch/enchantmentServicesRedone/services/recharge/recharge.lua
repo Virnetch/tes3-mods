@@ -91,12 +91,7 @@ local function rechargeItemSelected(e)
 		end
 
 		-- Take the money
-		tes3.transferItem({
-			from = tes3.player,
-			to = merchant,
-			item = "Gold_001",
-			count = rechargeCost
-		})
+		common.payMerchant(merchant, rechargeCost)
 
 		-- Restore the charge
 		itemData.charge = item.enchantment.maxCharge
