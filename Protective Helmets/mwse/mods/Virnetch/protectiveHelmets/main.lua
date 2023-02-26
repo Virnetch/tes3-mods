@@ -50,20 +50,29 @@ local function removeEffect(mobile)
 	end
 end
 
-local function isWhitelisted(equipmentStack)
+local function isObjectBlacklisted(object)
+	return (
+		config.blacklist[object.id:lower()]
+		or object.sourceMod and config.blacklist[object.sourceMod:lower()]
+	)
+end
+
+local function isObjectWhitelisted(object)
+	return (
+		config.whitelist[object.id:lower()]
+		or object.sourceMod and config.whitelist[object.sourceMod:lower()]
+	)
+end
+
+local function isEquipmentStackWhitelisted(equipmentStack)
 	local helmet = equipmentStack.object
 	local itemData = equipmentStack.itemData
-	-- Check also for the original item if Consistent Enchanting is installed
-	local enchantedFromObject = itemData and itemData.data and itemData.data.ncceEnchantedFrom and tes3.getObject(itemData.data.ncceEnchantedFrom)
 
-	return (
-	  config.whitelist[helmet.id:lower()]
-	  or helmet.sourceMod and config.whitelist[helmet.sourceMod:lower()]
-	  or enchantedFromObject and (
-		config.whitelist[enchantedFromObject.id:lower()]
-		or enchantedFromObject.sourceMod and config.whitelist[enchantedFromObject.sourceMod:lower()]
-	  )
-	)
+	-- Check also for the original item if Consistent Enchanting is installed
+	local enchantedFromObjectId = itemData and itemData.data and itemData.data.ncceEnchantedFrom
+	local enchantedFromObject = enchantedFromObjectId and tes3.getObject(enchantedFromObjectId)
+
+	return isObjectWhitelisted(helmet) or ( enchantedFromObject and isObjectWhitelisted(enchantedFromObject) )
 end
 
 --- @type table<string, mwseSafeObjectHandle>
@@ -77,6 +86,7 @@ local function updateResistance(e)
 			return
 		end
 	end
+
 	if tes3ui.menuMode() then
 		-- Adding effects in menuMode will only add the effect after exiting menuMode,
 		-- resulting in possibly multiple effects being added if player equips and
@@ -94,18 +104,18 @@ local function updateResistance(e)
 	local helmet = equippedHelmet and equippedHelmet.object
 
 	-- Remove effect if actor is not wearing a helmet, or if helmet is in blacklist
-	if not ( helmet and helmet.parts )
-	  or config.blacklist[helmet.id:lower()]
-	  or helmet.sourceMod and config.blacklist[helmet.sourceMod:lower()] then
+	if not ( helmet and helmet.parts ) or isObjectBlacklisted(helmet) then
 		removeEffect(e.reference.mobile)
 		return
 	end
 
-	if isWhitelisted(equippedHelmet) then
+	-- Add effect if actor's helmet is whitelisted
+	if isEquipmentStackWhitelisted(equippedHelmet) then
 		addEffect(e.reference.mobile, equippedHelmet)
 		return
 	end
 
+	-- Add effect if actor's helmet covers the entire head
 	for _, part in pairs(helmet.parts) do
 		if part.type == tes3.activeBodyPart.head then
 			-- The helmet covers entire head, add effect if actor doesn't already have it
@@ -114,7 +124,7 @@ local function updateResistance(e)
 		end
 	end
 
-	-- No head parts found, remove effect
+	-- Remove effect if actor's helmet doesn't cover the entire head
 	removeEffect(e.reference.mobile)
 end
 
@@ -168,15 +178,15 @@ local function initialized()
 		}
 	})
 
-	event.register("cellChanged", cellChanged)
-	event.register("equipped", updateResistance)
-	event.register("unequipped", updateResistance)
-	event.register("menuExit", menuExit)
+	event.register(tes3.event.cellChanged, cellChanged)
+	event.register(tes3.event.equipped, updateResistance)
+	event.register(tes3.event.unequipped, updateResistance)
+	event.register(tes3.event.menuExit, menuExit)
 
 	mwse.log("[Protective Helmets] Initialized.")
 end
-event.register("initialized", initialized)
+event.register(tes3.event.initialized, initialized)
 
-event.register("modConfigReady", function()
+event.register(tes3.event.modConfigReady, function()
 	require("Virnetch.protectiveHelmets.mcm")
 end)
