@@ -66,6 +66,7 @@ local function isWhitelisted(equipmentStack)
 	)
 end
 
+--- @type table<string, mwseSafeObjectHandle>
 local npcsToUpdate = {}
 local function updateResistance(e)
 	if e.eventType and e.eventType == "unequipped" then
@@ -80,7 +81,7 @@ local function updateResistance(e)
 		-- Adding effects in menuMode will only add the effect after exiting menuMode,
 		-- resulting in possibly multiple effects being added if player equips and
 		-- unequips helmet multiple times.
-		npcsToUpdate[e.reference.id] = e.reference
+		npcsToUpdate[e.reference.id] = tes3.makeSafeObjectHandle(e.reference)
 		return
 	end
 
@@ -118,8 +119,10 @@ local function updateResistance(e)
 end
 
 local function menuExit()
-	for _, ref in pairs(npcsToUpdate) do
-		updateResistance({ reference = ref })
+	for _, refHandle in pairs(npcsToUpdate) do
+		if refHandle:valid() then
+			updateResistance({ reference = refHandle:getObject() })
+		end
 	end
 	npcsToUpdate = {}
 end
