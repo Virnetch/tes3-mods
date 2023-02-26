@@ -1,7 +1,7 @@
 				Protective Helmets
 				By Virnetch
 
-Version: 1.0
+Version: 1.0.1
 
 
 =============
@@ -35,6 +35,8 @@ Recommended mods:
 ============
 Changelog
 ============
+1.0.1
+ - Prevent VFX from playing for the resistance effects when equipping a helmet
 
 ============
 Permissions
