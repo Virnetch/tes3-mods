@@ -15,8 +15,7 @@ end
 tes3.claimSpellEffectId("multiMark", 601)
 tes3.claimSpellEffectId("multiRecall", 602)
 
-local config = mwse.loadConfig("multi_mark")
-local default = {
+local config = mwse.loadConfig("multi_mark", {
 	dispositionRequired = 90,
 	multiMarkEnabled = true,
 	limitedRecallEnabled = true,
@@ -35,16 +34,7 @@ local default = {
 	limitedRecall = 2,
 	companionIntervention = false,
 	companionBlacklist = { "chargen boat guard 2", "guar_white_unique", "hlaalu guard", "hlaalu guard_outside", "Imperial Guard", "Imperial Guard_ebonhear", "ordinator stationary", "ordinator wander", "ordinator_high fane", "ordinator_mournhold", "redoran guard female", "redoran guard male", "telvanni guard", "telvanni sharpshooter", "ughash gro-batul", "yashnarz gro-ufthamph", "ab01bat01", "ab01bat02", "ab01bee01", "ab01bird01", "ab01bird02", "ab01bird03", "ab01bird04", "ab01bird05", "ab01bird06", "ab01bird07", "ab01bird10", "ab01bird11", "ab01bird12", "ab01bird13", "ab01bird14", "ab01bird15", "ab01butterfly01", "ab01butterfly02", "ab01butterfly03", "ab01butterfly04", "ab01firefly01" }
-}
-if config then
-	for k, v in pairs(default) do
-		if config[k] == nil then
-			config[k] = v
-		end
-	end
-else
-	config = default
-end
+})
 
 
 local MarkMenu = {}
@@ -403,17 +393,17 @@ end
 local function CancelMark()
 	local menu = tes3ui.findMenu(NewMarkMenuid)
 
-    if (menu) then
-        tes3ui.leaveMenuMode()
+	if (menu) then
+		tes3ui.leaveMenuMode()
 		menu:destroy()
-    end
+	end
 end
 
 local function CancelNewMark()
 	local menu = tes3ui.findMenu(MarkMenuid)
 
-    if (menu) then
-        tes3ui.leaveMenuMode()
+	if (menu) then
+		tes3ui.leaveMenuMode()
 		menu:destroy()
 	end
 end
@@ -422,7 +412,7 @@ local function CancelRecallToMark()
 	local menu = tes3ui.findMenu(RecallToMenuid)
 
 	if (menu) then
-        tes3ui.leaveMenuMode()
+		tes3ui.leaveMenuMode()
 		menu:destroy()
 	end
 end
@@ -430,8 +420,8 @@ end
 local function CancelRecallLocationSelection()
 	local menu = tes3ui.findMenu(RecallMenuid)
 
-    if (menu) then
-        tes3ui.leaveMenuMode()
+	if (menu) then
+		tes3ui.leaveMenuMode()
 		menu:destroy()
 		if (config.limitedRecallEnabled == true and tes3.player.data.multiMark.RecallsCast > 0) then
 			tes3.player.data.multiMark.RecallsCast = (tes3.player.data.multiMark.RecallsCast - 1)
@@ -443,7 +433,7 @@ local function CancelRecallCompanion()
 	local menu = tes3ui.findMenu(RecallCompanionMenuid)
 
 	if (menu) then
-        tes3ui.leaveMenuMode()
+		tes3ui.leaveMenuMode()
 		menu:destroy()
 	end
 end
@@ -480,7 +470,7 @@ local function NewMarkOk(MarkNumber)
 	local markMenu = tes3ui.findMenu(MarkMenuid)
 
 	if (menu) then
-        local MarkName = menu:findChild(NewMarkNameid).text
+		local MarkName = menu:findChild(NewMarkNameid).text
 
 		tes3ui.leaveMenuMode()
 		menu:destroy()
@@ -542,7 +532,7 @@ local function NewMarkOk(MarkNumber)
 			local mystSkill = tes3.getSkill(tes3.skill.mysticism)
 			tes3.mobilePlayer:exerciseSkill(tes3.skill.mysticism, mystSkill.actions[1])
 		end
-    end
+	end
 end
 
 --Create New Mark or replace existing
@@ -851,6 +841,11 @@ local function RecallCompanion(companionid, cost, chance)
 					table.remove(tes3.player.data.multiMark.markedCompanions, companionid)
 					if debug then print("Removed "..companionName.."in slot "..companionid) end
 				end
+				-- Fix AI, from abot's Smart Companions
+				mwse.memory.writeByte({
+					address = mwse.memory.convertFrom.tes3mobileObject(companionRef.mobile) + 0xC0,
+					byte = 0x00,
+				})
 			end)
 		else
 				--Failed recall
@@ -1026,7 +1021,7 @@ local function onCastRecall()
 
 	local recallBorder = recallBlock:createThinBorder{}
 	recallBorder.flowDirection = "top_to_bottom"
-    recallBorder.width = 300
+	recallBorder.width = 300
 	recallBorder.height = 500
 	recallBorder.childAlignX = 0.5
 	recallBorder.childAlignY = 0.5
@@ -1250,7 +1245,7 @@ local function onCastRecall()
 	end
 
 	RecallMenu:updateLayout()
-    tes3ui.enterMenuMode(RecallMenuid)
+	tes3ui.enterMenuMode(RecallMenuid)
 end
 
 local function spellCast(e)
@@ -1576,7 +1571,7 @@ event.register("loaded", loaded)
 ---------------------------------------------------------------------
 
 local function registerModConfig()
-    local EasyMCM = require("easyMCM.EasyMCM")
+	local EasyMCM = require("easyMCM.EasyMCM")
 	local template = EasyMCM.createTemplate("Multi Mark & Harder Recall")
 	template:saveOnClose("multi_mark", config)
 
@@ -1792,7 +1787,7 @@ local function registerModConfig()
 			table = config
 		}
 	}
-    EasyMCM.register(template)
+	EasyMCM.register(template)
 end
 event.register("modConfigReady", registerModConfig)
 
