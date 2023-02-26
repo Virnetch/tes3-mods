@@ -149,6 +149,17 @@ local function cellChanged()
 	end)
 end
 
+--- @param e vfxCreatedEventData
+local function blockHelmetResistanceVFX(e)
+	if not e.vfx.sourceInstance.source then return end
+	if e.vfx.sourceInstance.source ~= resistanceEnchantment then return end
+
+	e.vfx.expired = true
+
+	-- Claim the effect in case another mod were to implement a custom vfx etc.
+	e.claim = true
+end
+
 local function initialized()
 
 	-- Create the enchantment
@@ -182,6 +193,7 @@ local function initialized()
 	event.register(tes3.event.equipped, updateResistance)
 	event.register(tes3.event.unequipped, updateResistance)
 	event.register(tes3.event.menuExit, menuExit)
+	event.register(tes3.event.vfxCreated, blockHelmetResistanceVFX, { priority = 10 })
 
 	mwse.log("[Protective Helmets] Initialized.")
 end
