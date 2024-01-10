@@ -151,8 +151,10 @@ end
 
 --- @param e vfxCreatedEventData
 local function blockHelmetResistanceVFX(e)
-	if not e.vfx.sourceInstance.source then return end
-	if e.vfx.sourceInstance.source ~= resistanceEnchantment then return end
+	local sourceInstance = e.vfx.sourceInstance
+
+	if not sourceInstance or not sourceInstance.source then return end
+	if sourceInstance.source ~= resistanceEnchantment then return end
 
 	e.vfx.expired = true
 
