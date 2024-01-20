@@ -5,7 +5,7 @@ common.defaultConfig = require("Virnetch.ShrineTooltips.defaultConfig")
 common.i18n = mwse.loadTranslations("Virnetch.ShrineTooltips")
 
 common.mod = {}
-common.mod.version = "2.0.0"
+common.mod.version = "2.0.1"
 common.mod.name = common.i18n("mod.name")
 
 local logger = require("logging.logger")

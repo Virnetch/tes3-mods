@@ -1,7 +1,7 @@
 				Shrine Tooltips
 				By Virnetch
 
-Version: 2.0.0
+Version: 2.0.1
 
 =========
 Contents
@@ -31,12 +31,13 @@ Includes compatibility for shrines from Tamriel_Data, OAAB_Data, mtrDaedricOffer
 ============
 Changelog
 ============
+2.0.1
+ - Updated compatibility for shrines from Tamriel_Data. 
 2.0.0
  - Added MCM option to show more details about the effects of blessings.
  - Added compatibility for shrines from OAAB_Data.
  - Added MCM option to disable the mod.
  - Changed the way shrines are detected to improve stability.
- - Moved some functions to `common.lua` to add the possibility for other mods to use them.
  - Other minor changes and improvements
 1.2.3
  - Added compatibility with Solstheim - AllMaker's Blessings
