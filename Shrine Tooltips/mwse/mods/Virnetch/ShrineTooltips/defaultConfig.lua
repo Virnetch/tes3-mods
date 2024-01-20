@@ -21,13 +21,26 @@ return {
 
 		["shrineImperial"] = true,
 
-			--Tamriel_Data https://www.nexusmods.com/morrowind/mods/44537
+			-- Tamriel_Data https://www.nexusmods.com/morrowind/mods/44537
 		["T_ScObj_ShrineAlessia"] = true,
 		["T_ScObj_ShrineAlmalexiaMercy"] = true,
 		["T_ScObj_ShrineCuhlecain"] = true,
+		["T_ScObj_ShrineDivines"] = true,
 		["T_ScObj_ShrineMorihaus"] = true,
+		["T_ScObj_ShrineOrdinator"] = true,
+		["T_ScObj_ShrinePelinal"] = true,
 		["T_ScObj_ShrineReman"] = true,
 		["T_ScObj_ShrineSothaSilMastery"] = true,
+
+		["T_ScObj_ShrineHlaaluAkatosh"] = true,
+		["T_ScObj_ShrineHlaaluArkay"] = true,
+		["T_ScObj_ShrineHlaaluDibella"] = true,
+		["T_ScObj_ShrineHlaaluJulianos"] = true,
+		["T_ScObj_ShrineHlaaluKynareth"] = true,
+		["T_ScObj_ShrineHlaaluMara"] = true,
+		["T_ScObj_ShrineHlaaluStendarr"] = true,
+		["T_ScObj_ShrineHlaaluTalos"] = true,
+		["T_ScObj_ShrineHlaaluZenithar"] = true,
 
 		["T_ScObj_ShrineSaintColoPC"] = true,
 		["T_ScObj_ShrineSaintEmpPC"] = true,
@@ -38,9 +51,6 @@ return {
 		["T_ScObj_ShrineSaintTradePC"] = true,
 		["T_ScObj_ShrineSaintWarPC"] = true,
 		["T_ScObj_ShrineSaintWorkPC"] = true,
-
-		["T_ScObj_ShrinePelinal"] = true,
-		["T_ScObj_ShrineOrdinator"] = true,
 
 			-- OAAB_Data https://www.nexusmods.com/morrowind/mods/49042
 		["AB_ShrineAlma_s"] = true,
@@ -76,13 +86,26 @@ return {
 		["soul of sotha sil"] = true,
 		["vivec's mystery"] = true,
 
-			--Tamriel_Data https://www.nexusmods.com/morrowind/mods/44537
+			-- Tamriel_Data https://www.nexusmods.com/morrowind/mods/44537
 		["T_Imp_Res_BlessingAlessia"] = true,
 		["T_De_Res_AlmalexiasMercy"] = true,
 		["T_Imp_Res_BlessingCuhlecain"] = true,
+		["T_De_Res_BlessingWDiv"] = true,
 		["T_Imp_Res_BlessingMorihaus"] = true,
+		["T_De_Res_OrdinatorBlessing"] = true,
+		["T_Imp_Res_BlessingPelinal"] = true,
 		["T_Imp_Res_BlessingReman"] = true,
 		["T_De_Res_SothaSilsMastery"] = true,
+
+		["T_De_Res_AkatoshBlessing"] = true,
+		["T_De_Res_ArkayBlessing"] = true,
+		["T_De_Res_DibellaBlessing"] = true,
+		["T_De_Res_JulianosBlessing"] = true,
+		["T_De_Res_KynarethBlessing"] = true,
+		["T_De_Res_MaraBlessing"] = true,
+		["T_De_Res_StendarrBlessing"] = true,
+		["T_De_Res_TalosBlessing"] = true,
+		["T_De_Res_ZenitharBlessing"] = true,
 
 		["T_Imp_Res_BlessingStColo"] = true,
 		["T_Imp_Res_BlessingStEmp"] = true,
@@ -93,9 +116,6 @@ return {
 		["T_Imp_Res_BlessingStTrade"] = true,
 		["T_Imp_Res_BlessingStWar"] = true,
 		["T_Imp_Res_BlessingStWork"] = true,
-
-		["T_Imp_Res_BlessingPelinal"] = true,
-		["T_De_Res_OrdinatorBlessing"] = true,
 
 			-- mtrDaedricOfferings https://www.nexusmods.com/morrowind/mods/49697
 		["mtrFavorAzura"] = true,
