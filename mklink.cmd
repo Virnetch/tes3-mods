@@ -12,7 +12,7 @@ for /f "delims=" %%A in ('cd') do (
 echo %foldername%
 
 cd /d C:
-cd "C:\Games\Morrowind-Dev\Tools\ModOrganizer\mods"
+cd "C:\Dev\Morrowind\Tools\ModOrganizer\mods"
 mklink /J "%foldername%" %1
 
 pause
