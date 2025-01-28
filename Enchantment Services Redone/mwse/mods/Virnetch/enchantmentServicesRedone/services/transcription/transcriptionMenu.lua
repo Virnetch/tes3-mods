@@ -41,8 +41,8 @@ local RightClickMenuExit = include("mer.RightClickMenuExit")
 if RightClickMenuExit and RightClickMenuExit.registerMenu then
 	common.log:debug("Registering Right Click Menu Exit for TranscriptionMenu")
     RightClickMenuExit.registerMenu({
-        menuId = common.GUI_ID.TranscriptionMenu,
-        buttonId = common.GUI_ID.TranscriptionMenu_cancelButton
+        menuId = "vir_esr:TranscriptionMenu",
+        buttonId = "vir_esr:TranscriptionMenu_cancelButton"
     })
 end
 
