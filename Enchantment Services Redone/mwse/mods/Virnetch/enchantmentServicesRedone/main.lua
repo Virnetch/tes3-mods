@@ -1,8 +1,8 @@
 
 local common = require("Virnetch.enchantmentServicesRedone.common")
 
-if mwse.buildDate == nil or mwse.buildDate < 20220509 then
-    common.log:error("Build date of %s does not meet minimum build date of 20220509.", mwse.buildDate)
+if mwse.buildDate == nil or mwse.buildDate < 20250128 then
+    common.log:error("Build date of %s does not meet minimum build date of 20250128.", mwse.buildDate)
 	event.register(tes3.event.initialized, function()
 		tes3.messageBox(common.i18n("mod.updateRequired"))
 	end)
