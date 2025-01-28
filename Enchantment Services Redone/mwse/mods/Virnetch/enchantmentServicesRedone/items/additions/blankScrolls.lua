@@ -18,7 +18,7 @@ function blankScrolls.requirements(referenceOrObject)
 		if not (
 			referenceOrObject.data
 			and referenceOrObject.data.esr
-			and referenceOrObject.data.esr.blankScrollsAdded
+			and referenceOrObject.data.esr.blankScrollsReceived
 		) then
 			return true
 		end
@@ -30,7 +30,17 @@ end
 --- @param reference tes3reference
 function blankScrolls.addTo(reference)
 	reference.data.esr = reference.data.esr or {}
-	reference.data.esr.blankScrollsAdded = true
+
+	if reference.data.esr.blankScrollsAdded then
+		-- Clean up old references from versions prior to 0.9.6
+		reference.data.esr.blankScrollsAdded = nil
+		for cont in reference.cell:iterateReferences(tes3.objectType.container) do
+			if cont.baseObject.id == "vir_esr_cont_blankScrolls" then
+				common.log:debug("Deleting %s in %s", cont.id, reference.cell.id)
+				cont:delete()
+			end
+		end
+	end
 
 	-- Add the scrolls, enchanters get double
 	local gold = reference.baseObject.barterGold
@@ -43,6 +53,8 @@ function blankScrolls.addTo(reference)
 	for _=1, countToAdd do
 		containers.addContainer("blankScrolls", reference)
 	end
+
+	reference.data.esr.blankScrollsReceived = true
 end
 
 return blankScrolls
