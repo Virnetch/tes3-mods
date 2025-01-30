@@ -1,4 +1,4 @@
-		Enchantment Services Redone v0.9.6
+		Enchantment Services Redone v0.9.7
 			By Virnetch
 
 
@@ -84,6 +84,10 @@ The Mod Config Menu includes options to tweak the  cost and skill requirements o
 - [Buying Game](https://www.nexusmods.com/morrowind/mods/50574) \- Improves the restocking of the scrolls added by the `Blank Scrolls` setting by adding a delay between restocks, and increasing variety between the items added on each restock.
 
 ### Changelog
+
+#### 0.9.7
+
+* Fixed compatibility issues with some mods causing errors when launching the game
 
 #### 0.9.6
 
