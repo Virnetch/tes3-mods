@@ -387,9 +387,19 @@ end
 -- unenchanted scroll with the same mesh.
 do
 	common.log:debug("Storing enchantCapacities by mesh for transcription...")
+
+	--- Prevent bookGetText from triggering, causing issues with mods
+	--- not expecting the event to trigger before loading a save game
+	--- @param e bookGetTextEventData
+	local function onBookGetText(e)
+		e.claim = true
+	end
+	event.register(tes3.event.bookGetText, onBookGetText, { priority = 1000, unregisterOnLoad = true })
+
 	common.enchantCapacitiesByMesh = {}
 	local scrollForMesh = {}
 	for book in tes3.iterateObjects(tes3.objectType.book) do
+		--- @cast book tes3book
 		if (
 			book.type == tes3.bookType.scroll
 			and book.enchantCapacity > 0
@@ -414,6 +424,10 @@ do
 		common.enchantCapacitiesByMesh[mesh] = scroll.enchantCapacity
 		common.log:debug("	%s: %s from %s", scroll.enchantCapacity, mesh, scroll.id)
 	end
+
+	-- Re-enable the bookGetText event
+	event.unregister(tes3.event.bookGetText, onBookGetText)
+
 	common.log:debug("Done storing enchantCapacities.")
 end
 
