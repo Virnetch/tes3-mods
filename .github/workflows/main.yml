@@ -23,12 +23,12 @@ jobs:
 
       - name: Create Changelog
         id: create_changelog
-        uses: metcalfc/changelog-generator@v3.0.0
+        uses: metcalfc/changelog-generator@v4.3.1
         with:
           myToken: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create Release
-        uses: ncipollo/release-action@v1.10.0
+        uses: ncipollo/release-action@v1.15.0
         with:
           allowUpdates: true
           artifacts: "*.7z"
