@@ -18,6 +18,7 @@ jobs:
           do
             dir=${dir%*/}
             echo "Packaging $dir"
+            mv "$dir/README.md" "$dir/$dir - README.md"
             7z a "${dir// /}.7z" "./$dir/*"
           done
 
