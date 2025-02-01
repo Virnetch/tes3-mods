@@ -1,4 +1,4 @@
-        Customizable MWSE Multi Mark & Harder Recall v2.1.8
+        Customizable MWSE Multi Mark & Harder Recall v2.1.9
             By Virnetch
 
 ---
@@ -80,6 +80,18 @@ Features can be changed in MCM
   - Also works with scrolls, enchanted items and potions.
 
 ### Changelog
+
+#### 2.1.9
+
+- Added Right Click Menu Exit compatibility
+- Required disposition for companion recall can now be set to a negative value in the MCM
+
+Thanks to NullCascade for the following changes:
+
+- Fixed companion AI check bug.
+- Got rid of the created alchemy effects and mwscript forced equip in favor of the newer tes3.applyMagicEffect.
+- Fixed up the exterior cell finding logic to not check disabled/deleted doors and use more appropriate functions.
+- Made the tooltip on marks show the destination cell name (and the distance if using harder recall).
 
 #### 2.1.8
 
