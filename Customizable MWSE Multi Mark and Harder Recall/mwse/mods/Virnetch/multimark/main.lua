@@ -15,7 +15,8 @@ end
 tes3.claimSpellEffectId("multiMark", 601)
 tes3.claimSpellEffectId("multiRecall", 602)
 
-local config = mwse.loadConfig("multi_mark", {
+local config = mwse.loadConfig("multi_mark")
+local default = {
 	dispositionRequired = 90,
 	multiMarkEnabled = true,
 	limitedRecallEnabled = true,
@@ -34,7 +35,16 @@ local config = mwse.loadConfig("multi_mark", {
 	limitedRecall = 2,
 	companionIntervention = false,
 	companionBlacklist = { "chargen boat guard 2", "guar_white_unique", "hlaalu guard", "hlaalu guard_outside", "Imperial Guard", "Imperial Guard_ebonhear", "ordinator stationary", "ordinator wander", "ordinator_high fane", "ordinator_mournhold", "redoran guard female", "redoran guard male", "telvanni guard", "telvanni sharpshooter", "ughash gro-batul", "yashnarz gro-ufthamph", "ab01bat01", "ab01bat02", "ab01bee01", "ab01bird01", "ab01bird02", "ab01bird03", "ab01bird04", "ab01bird05", "ab01bird06", "ab01bird07", "ab01bird10", "ab01bird11", "ab01bird12", "ab01bird13", "ab01bird14", "ab01bird15", "ab01butterfly01", "ab01butterfly02", "ab01butterfly03", "ab01butterfly04", "ab01firefly01" }
-})
+}
+if config then
+	for k, v in pairs(default) do
+		if config[k] == nil then
+			config[k] = v
+		end
+	end
+else
+	config = default
+end
 
 
 local MarkMenu = {}
@@ -83,8 +93,8 @@ local debug = false
 local vanillaMarkCost
 local vanillaRecallCost
 local function addEffects()
-	local mark = tes3.getMagicEffect(tes3.effect.mark)
-	local recall = tes3.getMagicEffect(tes3.effect.recall)
+	local mark = assert(tes3.getMagicEffect(tes3.effect.mark))
+	local recall = assert(tes3.getMagicEffect(tes3.effect.recall))
 
 	vanillaMarkCost = mark.baseMagickaCost
 	vanillaRecallCost = recall.baseMagickaCost
@@ -187,29 +197,14 @@ local function castFailed()
 	end}
 end
 
-local function addEffect(id, effect)
-	local potion = tes3.getObject(id) or tes3alchemy.create{
-		id = id,
-		effects = {{
-			id = effect,
-			duration = 1
-		}}
-	}
-
-	mwscript.addItem({
-		reference = tes3.mobilePlayer,
-		item = potion
-	})
-	mwscript.equip({
-		reference = tes3.mobilePlayer,
-		item = potion
-	})
-	timer.delayOneFrame(function()
-		tes3.removeSound{
-			reference = tes3.player,
-			sound = "Drink"
+local function addEffect(_, effect)
+	tes3.applyMagicSource({
+		reference = tes3.player,
+		bypassResistances = true,
+		effects = {
+			{ id = effect, duration = 1 },
 		}
-	end)
+	})
 end
 
 local function getRecallsLeft()
@@ -222,91 +217,89 @@ local function getRecallsLeft()
 	end
 end
 
+--- @param cell tes3cell
+--- @return tes3vector3?
 local function findExteriorLocation(cell)
+	--- @type tes3cell[]
 	local linkedInteriors = {}
+	--- @type tes3cell[]
 	local cellsChecked = {}
 		--Checks current cell for doors leading to exteriors
-	for door in tes3.iterate(cell.activators) do
+	for door in cell:iterateReferences(tes3.objectType.door, false) do
 		local doorObject = door.object
 		if doorObject then
-			if doorObject.objectType == tes3.objectType.door then
-				if door.destination then
-					if door.destination.cell.isInterior == true then
-								--Makes sure the interior hasn't been checked already
-						if not table.find(cellsChecked, door.destination.cell.name) then
-								--Add interior cells to table
-							table.insert(linkedInteriors, door.destination.cell)
-							table.insert(cellsChecked, door.destination.cell.name)
-						end
-					else
-							--Return if an exterior cell was found
-						local exteriorLocation = door.destination.marker.position
-						return exteriorLocation
+			if door.destination then
+				if door.destination.cell.isInterior == true then
+					--Makes sure the interior hasn't been checked already
+					if not table.find(cellsChecked, door.destination.cell.name) then
+						--Add interior cells to table
+						table.insert(linkedInteriors, door.destination.cell)
+						table.insert(cellsChecked, door.destination.cell.name)
 					end
+				else
+					--Return if an exterior cell was found
+					local exteriorLocation = door.destination.marker.position
+					return exteriorLocation
 				end
 			end
 		end
 	end
 	table.insert(cellsChecked, cell.name)
-			--If no exteriors were found from the doors in the current cell, check the interiors found
+
+	--If no exteriors were found from the doors in the current cell, check the interiors found
 	while #linkedInteriors > 0 do		--Repeat until all interiors have been checked
 		local interiorCell = linkedInteriors[1]
-		for door in tes3.iterate(interiorCell.activators) do
-			local doorObject = door.object
-			if doorObject then
-				if doorObject.objectType == tes3.objectType.door then
-					if door.destination then
-						if door.destination.cell.isInterior == true then
-									--Makes sure the interior hasn't been checked already
-							if not table.find(cellsChecked, door.destination.cell.name) then
-									--Adds found interiors to the list
-								table.insert(linkedInteriors, door.destination.cell)
-								table.insert(cellsChecked, door.destination.cell.name)
-							end
-						else
-								--Return if an exterior was found
-							local exteriorLocation = door.destination.marker.position
-							return exteriorLocation
-						end
+		for door in interiorCell:iterateReferences(tes3.objectType.door, false) do
+			if door.destination then
+				if door.destination.cell.isInterior == true then
+					--Makes sure the interior hasn't been checked already
+					if not table.find(cellsChecked, door.destination.cell.name) then
+						--Adds found interiors to the list
+						table.insert(linkedInteriors, door.destination.cell)
+						table.insert(cellsChecked, door.destination.cell.name)
 					end
+				else
+					--Return if an exterior was found
+					local exteriorLocation = door.destination.marker.position
+					return exteriorLocation
 				end
 			end
 		end
-			--Removes the checked interior from the list
+		--Removes the checked interior from the list
 		table.remove(linkedInteriors, 1)
 	end
 	return nil
 end
 
+--- @param cell tes3cell
+--- @param target string
+--- @return boolean
 local function linkedInternalLocations(cell, target)
+	--- @type tes3cell[]
 	local linkedInteriors = {}
+	--- @type tes3cell[]
 	local cellsChecked = {}
 	table.insert(linkedInteriors, cell)
 	table.insert(cellsChecked, cell.name)
-			--If no exteriors were found from the doors in the current cell, check the interiors found
+	--If no exteriors were found from the doors in the current cell, check the interiors found
 	while #linkedInteriors > 0 do		--Repeat until all interiors have been checked
 		local interiorCell = linkedInteriors[1]
 		if interiorCell.id == target then
 			return true
 		end
-		for door in tes3.iterate(interiorCell.activators) do
-			local doorObject = door.object
-			if doorObject then
-				if doorObject.objectType == tes3.objectType.door then
-					if door.destination then
-						if door.destination.cell.isInterior == true then
-									--Makes sure the interior hasn't been checked already
-							if not table.find(cellsChecked, door.destination.cell.name) then
-									--Adds found interiors to the list
-								table.insert(linkedInteriors, door.destination.cell)
-								table.insert(cellsChecked, door.destination.cell.name)
-							end
-						end
+		for door in interiorCell:iterateReferences(tes3.objectType.door, false) do
+			if door.destination then
+				if door.destination.cell.isInterior == true then
+					--Makes sure the interior hasn't been checked already
+					if not table.find(cellsChecked, door.destination.cell.name) then
+						--Adds found interiors to the list
+						table.insert(linkedInteriors, door.destination.cell)
+						table.insert(cellsChecked, door.destination.cell.name)
 					end
 				end
 			end
 		end
-			--Removes the checked interior from the list
+		--Removes the checked interior from the list
 		table.remove(linkedInteriors, 1)
 	end
 	return false
@@ -474,7 +467,9 @@ local function NewMarkOk(MarkNumber)
 
 		tes3ui.leaveMenuMode()
 		menu:destroy()
-		markMenu:destroy()
+		if (markMenu) then
+			markMenu:destroy()
+		end
 
 		local cell = tes3.getPlayerCell()
 		local position = tes3.player.position:copy()
@@ -740,11 +735,11 @@ local function onCastMark()
 	CancelMarkButton:register("mouseClick", CancelNewMark)
 --Companions
 	local markedCompanions = tes3.player.data.multiMark.markedCompanions
-	for companion in tes3.iterate(tes3.mobilePlayer.friendlyActors) do
+	for _, companion in ipairs(tes3.mobilePlayer.friendlyActors) do
 		local companionName = companion.reference.object.name
 		if debug then print("Found Friendly Actor: "..companionName) end
 		if companion ~= tes3.mobilePlayer then
-			if tes3.getCurrentAIPackageId(companion) == tes3.aiPackage.follow then
+			if tes3.getCurrentAIPackageId({ reference = companion }) == tes3.aiPackage.follow then
 				if isActorInBlacklist(companion) == false then
 					local animState = companion.actionData.animationAttackState
 					if (companion.health.current > 0 and animState ~= tes3.animationState.dying and animState ~= tes3.animationState.dead) then
@@ -821,7 +816,7 @@ local function RecallCompanion(companionid, cost, chance)
 				name = "magicka",
 				current = -cost
 			})
-			recallMenu:destroy()
+			if (recallMenu) then recallMenu:destroy() end
 			tes3.positionCell({
 				reference = companionRef,
 				cell = Cell,
@@ -856,7 +851,7 @@ local function RecallCompanion(companionid, cost, chance)
 				current = -cost
 			})
 			castFailed()
-			recallMenu:destroy()
+			if (recallMenu) then recallMenu:destroy() end
 		end
 	end
 end
@@ -893,7 +888,7 @@ local function RecallToOk(Markid)
 				name = "magicka",
 				current = -cost
 			})
-			recallMenu:destroy()
+			if (recallMenu) then recallMenu:destroy() end
 			tes3.positionCell({
 				reference = tes3.mobilePlayer,
 				cell = Cell,
@@ -919,7 +914,7 @@ local function RecallToOk(Markid)
 				current = -cost
 			})
 			castFailed()
-			recallMenu:destroy()
+			if (recallMenu) then recallMenu:destroy() end
 			misCast()
 		end
 	end
@@ -1093,7 +1088,23 @@ local function onCastRecall()
 				else	--Shows 0 chance if not enough magicka
 					chanceM = 0
 				end
-				toolTip:createLabel{ text = "Cost: "..cost[i].." Chance: "..chanceM }
+
+				local header = nil
+				local markData = tes3.player.data.multiMark.MarkSlots[i]
+				local destination = tes3.getCell({ id = markData.Cell }) or tes3.getCell({ position = markData.Position })
+				if (destination) then
+					header = toolTip:createLabel({ text = destination.displayName })
+				else
+					header = toolTip:createLabel({ text = "Unknown Location" })
+				end
+				header.color = tes3ui.getPalette(tes3.palette.headerColor)
+
+				if (distance > 0) then
+					toolTip:createLabel({ text = string.format("Distance: %d", distance) })
+				end
+				
+				toolTip:createLabel({ text = string.format("Cost: %d", cost[i]) })
+				toolTip:createLabel({ text = string.format("Chance: %d", chanceM) })
 			end
 		)
 		recallSelect:register(
@@ -1402,9 +1413,9 @@ local function magicCasted(e)	--For alchemy and enchanted items
 			companions = {}
 			if config.companionIntervention == true then
 				intervention = true
-				for companion in tes3.iterate(tes3.mobilePlayer.friendlyActors) do
+				for _, companion in ipairs(tes3.mobilePlayer.friendlyActors) do
 					if companion ~= tes3.mobilePlayer then
-						if tes3.getCurrentAIPackageId(companion) == tes3.aiPackage.follow then
+						if tes3.getCurrentAIPackageId({ reference = companion }) == tes3.aiPackage.follow then
 							if isActorInBlacklist(companion) == false then
 								local animState = companion.actionData.animationAttackState
 								if (companion.health.current > 0 and animState ~= tes3.animationState.dying and animState ~= tes3.animationState.dead) then
@@ -1498,6 +1509,7 @@ local function updateCost()
 --		objects = {tes3.objectType.spell}
 --	end
 	for object in tes3.iterateObjects({tes3.objectType.spell}) do
+		--- @cast object tes3spell
 		if (object.effects) then
 			for i=1, 8 do
 				if (object.effects[i]) then
@@ -1521,6 +1533,7 @@ local function updateCost()
 		end
 	end
 	for object in tes3.iterateObjects({tes3.objectType.enchantment, tes3.objectType.alchemy}) do
+		--- @cast object tes3alchemy|tes3enchantment
 		if (object.effects) then
 			for i=1, 8 do
 				if (object.effects[i]) then
@@ -1578,9 +1591,9 @@ local function registerModConfig()
 	local page = template:createSideBarPage{
 		sidebarComponents = {
 			EasyMCM.createInfo{ text = "This mod allows marking multiple locations and limiting daily recalls. You can customize all numbers and toggle features on this page." },
-			EasyMCM.createHyperLink{
+			EasyMCM.createHyperlink{
 				text = "Experiment with different values here.",
-				exec = "start https://www.desmos.com/calculator/zbdybousfl"
+				url = "https://www.desmos.com/calculator/zbdybousfl"
 			}
 		}
 	}
@@ -1591,7 +1604,7 @@ local function registerModConfig()
 		label = "Enable Multimark",
 		description = "Enable or disable multiple marks. Default: On",
 		restartRequired = true,
-		variable = EasyMCM:createTableVariable{
+		variable = EasyMCM.createTableVariable{
 			id = "multiMarkEnabled",
 			table = config
 		}
@@ -1601,7 +1614,7 @@ local function registerModConfig()
 		label = "Enable Limited Recall",
 		description = "Enable or disable limited recall. Default: On",
 		restartRequired = true,
-		variable = EasyMCM:createTableVariable{
+		variable = EasyMCM.createTableVariable{
 			id = "limitedRecallEnabled",
 			table = config
 		}
@@ -1610,7 +1623,7 @@ local function registerModConfig()
 	enableCategory:createOnOffButton{
 		label = "Enable Harder Recall",
 		description = "If enabled, recalling will cost more magicka and have lower chance of success based on distance to mark, current mysticism and your current fatigue percent. Requires multi mark enabled. Default: Off",
-		variable = EasyMCM:createTableVariable{
+		variable = EasyMCM.createTableVariable{
 			id = "increasedMagickaCostForDistanceTraveled",
 			table = config
 		}
@@ -1620,7 +1633,7 @@ local function registerModConfig()
 		label = "Enable Miscast",
 		description = "REQUIRES MISCAST ENHANCED If enabled there is a chance that you will be teleported to a random location when failing to create mark or failing to recall. Failing to teleport a companion to your location won't have a chance of Miscast. Default: Off",
 		restartRequired = true,
-		variable = EasyMCM:createTableVariable{
+		variable = EasyMCM.createTableVariable{
 			id = "enableMisCast",
 			table = config
 		}
@@ -1629,7 +1642,7 @@ local function registerModConfig()
 	enableCategory:createOnOffButton{
 		label = "Enable companion teleportation when casting intervention",
 		description = "Companions will teleport to you when casting Almsivi or Divine Intervention, if they are in the same cell as you when casting the spell. Also works with scrolls, enchanted items and potions. Default: Off",
-		variable = EasyMCM:createTableVariable{
+		variable = EasyMCM.createTableVariable{
 			id = "companionIntervention",
 			table = config
 		}
@@ -1644,7 +1657,7 @@ local function registerModConfig()
 		min = 2,
 		step = 1,
 		jump = 4,
-		variable = EasyMCM:createTableVariable{
+		variable = EasyMCM.createTableVariable{
 			id = "maxNumberOfMarks",
 			table = config
 		}
@@ -1654,7 +1667,7 @@ local function registerModConfig()
 		label = "Enable multimark for enchanted items, scrolls and potions.",
 		description = "If disabled, potions, scrolls and enchanted items will use default mark and recall function. Default: On",
 		restartRequired = true,
-		variable = EasyMCM:createTableVariable{
+		variable = EasyMCM.createTableVariable{
 			id = "enableEnchantedItemAndPotion",
 			table = config
 		}
@@ -1663,7 +1676,7 @@ local function registerModConfig()
 	markCategory:createOnOffButton{
 		label = "Mysticism affects number of marks available",
 		description = "If enabled, your mysticism will affect how many marks you have. Otherwise you will always have the maximum number of marks. Default: On",
-		variable = EasyMCM:createTableVariable{
+		variable = EasyMCM.createTableVariable{
 			id = "mysticismAffectsMaxMarks",
 			table = config
 		}
@@ -1672,7 +1685,7 @@ local function registerModConfig()
 	markCategory:createOnOffButton{
 		label = "Use current mysticism to calculate number of marks",
 		description = "If enabled, your current mysticism will be used for calculating number of marks available instead of your base mysticism. Requires that 'Mysticism affects number of marks available' has been enabled. Default: Off",
-		variable = EasyMCM:createTableVariable{
+		variable = EasyMCM.createTableVariable{
 			id = "useCurrentMysticism",
 			table = config
 		}
@@ -1685,7 +1698,7 @@ local function registerModConfig()
 		min = 40,
 		step = 5,
 		jump = 20,
-		variable = EasyMCM:createTableVariable{
+		variable = EasyMCM.createTableVariable{
 			id = "mysticismRequiredForMaxMarks",
 			table = config
 		}
@@ -1698,7 +1711,7 @@ local function registerModConfig()
 	--	min = 0.01,
 	--	step = 0.01,
 	--	jump = 0.5,
-	--	variable = EasyMCM:createTableVariable{
+	--	variable = EasyMCM.createTableVariable{
 	--		id = "expMult",
 	--		table = config
 	--	}
@@ -1708,7 +1721,7 @@ local function registerModConfig()
 		label = "Exponent multiplier",
 		description = "Setting this to 1 will give you half of your max marks at half of the required mysticism for max marks. A number higher than one will give you less marks at lower mysticism, while giving more at a mysticism value close to your required mysticism for max marks. A lower number will do the opposite, giving you more marks at a lower mysticism value, and less at a mysticism value close to your requred mysticism for max marks. If you change this, please test different values in the desmos graph linked in the sidebar. Default: 2",
 		numbersOnly = true,
-		variable = EasyMCM:createTableVariable{
+		variable = EasyMCM.createTableVariable{
 			id = "expMult",
 			table = config
 		}
@@ -1719,7 +1732,7 @@ local function registerModConfig()
 	companionCategory:createOnOffButton{
 		label = "Teleport companions when recalling",
 		description = "If enabled, your companions will teleport with you when recalling. Default: On",
-		variable = EasyMCM:createTableVariable{
+		variable = EasyMCM.createTableVariable{
 			id = "teleportCompanions",
 			table = config
 		}
@@ -1732,7 +1745,7 @@ local function registerModConfig()
 		min = 0,
 		step = 5,
 		jump = 10,
-		variable = EasyMCM:createTableVariable{
+		variable = EasyMCM.createTableVariable{
 			id = "dispositionRequired",
 			table = config
 		}
@@ -1747,7 +1760,7 @@ local function registerModConfig()
 		min = 0,
 		step = 1,
 		jump = 100,
-		variable = EasyMCM:createTableVariable{
+		variable = EasyMCM.createTableVariable{
 			id = "costBetweenUnlinkedAreas",
 			table = config
 		}
@@ -1757,7 +1770,7 @@ local function registerModConfig()
 		label = "Harder recall Cost multiplier",
 		description = "Higher values increase the magicka cost for recalling long distances. Requires that 'Harder recall' has been enabled. Default: 1.0",
 		numbersOnly = true,
-		variable = EasyMCM:createTableVariable{
+		variable = EasyMCM.createTableVariable{
 			id = "iMCFDTcostMultiplier",
 			table = config
 		}
@@ -1767,7 +1780,7 @@ local function registerModConfig()
 		label = "Harder recall Chance Multiplier",
 		description = "Higher values increase your recall cast chance. Set to 0 to disable. Requires that 'Harder recall' has been enabled. Default: 1.0",
 		numbersOnly = true,
-		variable = EasyMCM:createTableVariable{
+		variable = EasyMCM.createTableVariable{
 			id = "iMCFDTrecallChanceMultiplier",
 			table = config
 		}
@@ -1782,7 +1795,7 @@ local function registerModConfig()
 		min = 1,
 		step = 1,
 		jump = 1,
-		variable = EasyMCM:createTableVariable{
+		variable = EasyMCM.createTableVariable{
 			id = "limitedRecall",
 			table = config
 		}
