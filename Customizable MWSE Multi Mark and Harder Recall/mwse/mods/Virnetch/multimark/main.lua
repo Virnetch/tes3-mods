@@ -1742,7 +1742,7 @@ local function registerModConfig()
 		label = "Disposition required to recall a companion to your location",
 		description = "Change the disposition required to recall a companion to your location. Default: 90",
 		max = 100,
-		min = 0,
+		min = -100,
 		step = 5,
 		jump = 10,
 		variable = EasyMCM.createTableVariable{
