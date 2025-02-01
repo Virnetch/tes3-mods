@@ -1826,3 +1826,28 @@ local function initialized()
 end
 
 event.register("initialized", initialized)
+
+local RightClickMenuExit = include("mer.RightClickMenuExit")
+if RightClickMenuExit and RightClickMenuExit.registerMenu then
+	print("[MultiMark] Registering Right Click Menu Exit for Mark and Recall menus")
+    RightClickMenuExit.registerMenu({
+        menuId = "V1R_MM:MarkMenu",
+        buttonId = "V1R_MM:CancelMark"
+    })
+    RightClickMenuExit.registerMenu({
+        menuId = "V1R_MM:NewMarkMenu",
+        buttonId = "V1R_MM:NewMarkCancelButton"
+    })
+    RightClickMenuExit.registerMenu({
+        menuId = "V1R_MM:RecallMenu",
+        buttonId = "V1R_MM:CancelRecall"
+    })
+    RightClickMenuExit.registerMenu({
+        menuId = "V1R_MM:RecallToMenu",
+        buttonId = "V1R_MM_RecallToCancel"
+    })
+    RightClickMenuExit.registerMenu({
+        menuId = "V1R_MM:RecallCompanionMenu",
+        buttonId = "V1R_MM_RecallCompanionCancel"
+    })
+end
