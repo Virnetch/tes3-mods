@@ -10,7 +10,7 @@
 
 ### Features
 
-> _Adds a fillbar that shows the currently equipped weapon's charge under the weapon condition bar on the HUD._
+> _Adds a fillbar that shows the currently equipped weapon's charge under the weapon condition bar on the HUD_
 
 In vanilla Morrowind there is a fillbar under the currently equipped enchanted item's icon showing how much charge is left on it. This mod adds a similar bar under the equipped enchanted weapon's icon, so that you can quickly see the charge left on it.
 
