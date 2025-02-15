@@ -1,0 +1,16 @@
+[package]
+name = "Try Before You Buy"
+description = "Adds a new button to the barter menu which allows you to try clothing and armor before paying for it"
+homepage = "https://www.nexusmods.com/morrowind/mods/49647"
+repository = "https://github.com/Virnetch/tes3-mods"
+authors = ["Virnetch"]
+version = "1.0.4"
+
+[tools.mwse]
+lua-mod = "Virnetch.TryBeforeYouBuy"
+wait-until-initialized = false
+
+[dependencies]
+assets = [
+	"icons\\tbyb"
+]

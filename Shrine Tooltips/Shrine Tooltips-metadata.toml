@@ -1,0 +1,11 @@
+[package]
+name = "Shrine Tooltips"
+description = "Adds tooltips to shrines on hovering over the different options, describing the effects a blessing has"
+homepage = "https://www.nexusmods.com/morrowind/mods/48275"
+repository = "https://github.com/Virnetch/tes3-mods"
+authors = ["Virnetch"]
+version = "2.0.1"
+
+[tools.mwse]
+lua-mod = "Virnetch.ShrineTooltips"
+wait-until-initialized = false

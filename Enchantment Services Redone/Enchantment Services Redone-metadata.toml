@@ -1,0 +1,11 @@
+[package]
+name = "Enchantment Services Redone"
+description = "Adds NPC services for recharging enchanted items, deciphering magic scrolls and the option to transcribe magic scrolls, both by the player, and through a service. Adds empty scrolls from OAAB to enchanters and booksellers, and disables the passive recharging of enchanted items. Highly customizable through the Mod Config Menu."
+homepage = "https://www.nexusmods.com/morrowind/mods/51249"
+repository = "https://github.com/Virnetch/tes3-mods"
+authors = ["Virnetch"]
+version = "0.9.7"
+
+[tools.mwse]
+lua-mod = "Virnetch.enchantmentServicesRedone"
+wait-until-initialized = false

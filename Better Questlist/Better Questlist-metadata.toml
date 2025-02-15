@@ -1,0 +1,11 @@
+[package]
+name = "Better Questlist"
+description = "Allows highlighting and hiding quests in the Journal questlist"
+homepage = "https://www.nexusmods.com/morrowind/mods/48272"
+repository = "https://github.com/Virnetch/tes3-mods"
+authors = ["Virnetch"]
+version = "1.2.0"
+
+[tools.mwse]
+lua-mod = "Virnetch.BetterQuestList"
+wait-until-initialized = false

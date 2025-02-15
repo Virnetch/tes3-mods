@@ -1,0 +1,14 @@
+[package]
+name = "Enchanted Weapon Resistance"
+description = "Automatically changes the Ignore normal weapon resistance flag for all enchanted weapons and ammunition to be the same as an unenchanted item with the same mesh. Blocks cast-on-strike enchantments from triggering when the item has no effect on the target."
+homepage = "https://www.nexusmods.com/morrowind/mods/50194"
+repository = "https://github.com/Virnetch/tes3-mods"
+authors = ["Virnetch"]
+version = "1.1.1"
+
+[tools.mwse]
+lua-mod = "Virnetch.enchantedWeaponResistance"
+wait-until-initialized = false
+
+[dependencies.mcp.features]
+weaponResistanceChange = true
