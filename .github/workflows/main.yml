@@ -11,6 +11,10 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
+      - name: Create metadata.toml
+        shell: bash
+        run: ./metadata.sh
+
       - name: Package All
         run: |
           sudo apt-get install p7zip
@@ -32,6 +36,6 @@ jobs:
         uses: ncipollo/release-action@v1.15.0
         with:
           allowUpdates: true
-          artifacts: "*.7z"
+          artifacts: "*.7z,metadata.toml"
           body: ${{ steps.create_changelog.outputs.changelog }}
           token: ${{ secrets.GITHUB_TOKEN }}
