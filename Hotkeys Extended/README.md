@@ -1,4 +1,4 @@
-        Hotkeys Extended v1.1.3
+        Hotkeys Extended v1.1.4
             By Virnetch
 
 ---
@@ -23,6 +23,10 @@
 - [Quick Loadouts](https://www.nexusmods.com/morrowind/mods/46708)
 
 ### Changelog
+
+#### 1.1.4
+
+- Fixed issues with hotkeys referencing missing objects.
 
 #### 1.1.3
 

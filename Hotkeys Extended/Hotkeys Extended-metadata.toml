@@ -4,7 +4,7 @@ description = "Expands the vanilla Quick Menu by adding different hotkeys for ho
 homepage = "https://www.nexusmods.com/morrowind/mods/48055"
 repository = "https://github.com/Virnetch/tes3-mods"
 authors = ["Virnetch"]
-version = "1.1.3"
+version = "1.1.4"
 
 [tools.mwse]
 lua-mod = "Virnetch.HotKeys"
