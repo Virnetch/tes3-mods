@@ -1155,6 +1155,32 @@ local function quickMenuOpen()
 end
 event.register("uiActivated", quickMenuOpen, { filter = "MenuQuick" })
 
+local function clearData(keybind)
+	keybind.id = nil
+	keybind.name = nil
+	keybind.icon = nil
+	keybind.isMagic = false
+	keybind.isItem = false
+end
+
+local function validateData(keybind)
+	keybind.id = keybind.id or nil
+	keybind.name = keybind.name or nil	--for enchanted items
+	keybind.icon = keybind.icon or nil
+	keybind.isMagic = keybind.isMagic or false
+	keybind.isItem = keybind.isItem or false
+
+	if (type(keybind.id) == "string") then
+		-- Clear the keybind if the data was removed.
+		local object = tes3.getObject(keybind.id)
+		if (object == nil) then
+			mwse.log("Hotkey for object '%s' was removed; the object no longer exists.", keybind.id)
+			clearData(keybind)
+			return
+		end
+	end
+end
+
 local function loaded()
 	lastWeaponEquipped = nil
 
@@ -1189,11 +1215,7 @@ local function loaded()
 
 		for _, type in ipairs(types) do
 			data[type][i] = data[type][i] or {}
-			data[type][i].id = data[type][i].id or nil
-			data[type][i].name = data[type][i].name or nil	--for enchanted items
-			data[type][i].icon = data[type][i].icon or nil
-			data[type][i].isMagic = data[type][i].isMagic or false
-			data[type][i].isItem = data[type][i].isItem or false
+			validateData(data[type][i])
 		end
 	end
 	data.quick_[10].id = 0
