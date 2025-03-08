@@ -39,3 +39,14 @@ jobs:
           artifacts: "*.7z,metadata.toml"
           body: ${{ steps.create_changelog.outputs.changelog }}
           token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Purge cache for camo images in README
+        shell: bash
+        run: |
+          curl -s https://github.com/${{ github.repository }} |
+            grep -oE "https://camo.githubusercontent.com[a-zA-Z0-9/]+" |
+            sort -u |
+            while read url; do
+              curl -sX PURGE "$url";
+              echo;
+            done
