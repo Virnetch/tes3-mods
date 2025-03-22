@@ -1,4 +1,4 @@
-        Customizable MWSE Multi Mark & Harder Recall v2.1.9
+        Customizable MWSE Multi Mark & Harder Recall v2.1.10
             By Virnetch
 
 ---
@@ -80,6 +80,10 @@ Features can be changed in MCM
   - Also works with scrolls, enchanted items and potions.
 
 ### Changelog
+
+#### 2.1.10
+
+- Added MCM option "Sort mark list" to sort the marked locations by their names (Disabled by default)
 
 #### 2.1.9
 

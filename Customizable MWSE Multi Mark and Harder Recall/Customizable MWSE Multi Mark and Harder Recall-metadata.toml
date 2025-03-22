@@ -4,7 +4,7 @@ description = "An overhaul of the mark and recall system"
 homepage = "https://www.nexusmods.com/morrowind/mods/47065"
 repository = "https://github.com/Virnetch/tes3-mods"
 authors = ["Virnetch"]
-version = "2.1.9"
+version = "2.1.10"
 
 [tools.mwse]
 lua-mod = "Virnetch.multimark"
