@@ -26,6 +26,7 @@ local default = {
 	maxNumberOfMarks = 16,
 	enableEnchantedItemAndPotion = true,
 	teleportCompanions = true,
+	sortMarkList = false,
 	mysticismAffectsMaxMarks = true,
 	useCurrentMysticism = false,
 	mysticismRequiredForMaxMarks = 100,
@@ -720,6 +721,11 @@ local function onCastMark()
 		)
 	end
 --Used Mark Slots
+	if config.sortMarkList then
+		table.sort(tes3.player.data.multiMark.MarkSlots, function(a, b)
+			return a.Name < b.Name
+		end)
+	end
 	for i = 1, #tes3.player.data.multiMark.MarkSlots do
 		local MarkName = tes3.player.data.multiMark.MarkSlots[i].Name	--Get Mark Name from table
 		local markSelectUsed = markList:createButton{ id = "V1R_MM_UsedMarkButtons", text = MarkName }
@@ -1054,6 +1060,11 @@ local function onCastRecall()
 	companionList.height = 400
 
 --Mark Slots
+	if config.sortMarkList then
+		table.sort(tes3.player.data.multiMark.MarkSlots, function(a, b)
+			return a.Name < b.Name
+		end)
+	end
 	local cost = {}
 	local chance = {}
 	for i = 1, MarksUsed do
@@ -1725,6 +1736,15 @@ local function registerModConfig()
 			id = "expMult",
 			table = config
 		}
+	}
+
+	markCategory:createOnOffButton{
+		label = "Sort mark list",
+		description = "If enabled, the list of marks in the mark and recall menus will be sorted alphabetically. Note that reverting to the previous order after opening the menu with this setting enabled is not possible, unless you load an earlier save file. Default: Off",
+		variable = EasyMCM.createTableVariable {
+			id = "sortMarkList",
+			table = config,
+		},
 	}
 
 	local companionCategory = page:createCategory("Customize companion related settings.")
